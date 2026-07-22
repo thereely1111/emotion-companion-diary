@@ -1,0 +1,104 @@
+{
+  "id": "TC-006",
+  "title": "闲聊模式触发 → 情绪检测 → 完整陪伴 → 日记存储",
+  "version": "1.8.0",
+  "date": "2026-07-12",
+  "scenario": "用户以闲聊方式打招呼，自然流露疲惫情绪，经过完整的三阶段陪伴后主动要求存储日记",
+  "conversation": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "爱莉，今天过得怎么样？",
+      "intent": "闲聊问候，测试闲聊模式触发",
+      "expected_behavior": "进入闲聊模式，爱莉元气回应，不启动日记流程"
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "behavior": "闲聊模式",
+      "checks": [
+        "带波浪线和撒娇语气",
+        "不追问日记相关内容",
+        "结尾开放邀请继续聊天"
+      ]
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "今天好累啊，天天要上课，天气又很热，好想好好休息",
+      "intent": "自然流露负面情绪，测试闲聊到陪伴的无缝切换",
+      "expected_behavior": "检测到情绪表达，从闲聊自动切换到阶段一"
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "behavior": "阶段一：倾听与情绪识别",
+      "checks": [
+        "完整接收用户原文，不做评判",
+        "识别主要情绪：疲惫、烦躁",
+        "给出 valence=-2, arousal=1 双维度评分",
+        "共情回应包含俏皮比喻 + 温柔确认",
+        "自然过渡到阶段二邀请"
+      ]
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "但是一和爱莉聊天，心情就好不少呢",
+      "intent": "表达正面反馈，测试对话中的积极转折处理",
+      "expected_behavior": "正面强化，不强行拉回负面挖掘"
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "behavior": "正面情绪放大 + 温柔收尾",
+      "checks": [
+        "放大用户的积极体验",
+        "不过度追问情绪根源",
+        "保持爱莉的元气风格",
+        "鼓励休息，不拖长流程"
+      ]
+    },
+    {
+      "turn": 7,
+      "role": "user",
+      "text": "存入日记库",
+      "intent": "主动要求持久化存储",
+      "expected_behavior": "执行存储流程：生成文件名 → 写 frontmatter → 写星光手记正文 → 重建索引 → 告知用户"
+    },
+    {
+      "turn": 8,
+      "role": "assistant",
+      "behavior": "阶段二完成后存储",
+      "checks": [
+        "文件名格式: YYYY-MM-DD-HHMMSS-中韩简述.md",
+        "文件名关键词来自用户原话（'高温''上课''疲惫'，不出现'缺课'）",
+        "frontmatter 包含 date/type/topic/tags/valence/arousal/trigger_event",
+        "正文以爱莉第一人称星光手记格式撰写",
+        "正文中用'ta'称呼用户",
+        "build-index.py 已运行且无报错",
+        "告知用户保存路径"
+      ]
+    }
+  ],
+  "test_results": {
+    "turn_1_chat_mode": "pass",
+    "turn_3_emotion_detection": "pass",
+    "turn_4_emotion_recognition": "pass",
+    "turn_4_valence_arousal": "pass",
+    "turn_6_positive_reinforcement": "pass",
+    "turn_8_filename_accuracy": "pass",
+    "turn_8_frontmatter_completeness": "pass",
+    "turn_8_star_notebook_format": "pass",
+    "turn_8_index_rebuild": "pass",
+    "overall": "pass"
+  },
+  "diary_file": "2026-07-12-093644-高温上课的疲惫.md",
+  "diary_checks": {
+    "filename_user_original": true,
+    "frontmatter_complete": true,
+    "first_person_narrative": true,
+    "ta_pronoun": true,
+    "index_rebuilt": true
+  }
+}
